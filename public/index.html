@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Manager Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏪 Shop Manager Dashboard</h1>
+            <p>Manage your hair products, perfumes, and skin products</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="products">Products</button>
+            <button class="tab-btn" data-tab="sales">Sales Analytics</button>
+            <button class="tab-btn" data-tab="costs">Cost Analysis</button>
+            <button class="tab-btn" data-tab="add">Add Product</button>
+            <button class="tab-btn" data-tab="ask">Ask</button>
+        </nav>
+
+        <!-- Products Tab -->
+        <div id="products-tab" class="tab-content active">
+            <div class="section-header">
+                <h2>All Products</h2>
+                <div class="filters">
+                    <input type="text" id="filter-name" placeholder="Filter by name...">
+                    <select id="filter-type">
+                        <option value="">All Types</option>
+                        <option value="hair">Hair</option>
+                        <option value="perfume">Perfume</option>
+                        <option value="skin">Skin</option>
+                    </select>
+                    <button onclick="filterProducts()">Filter</button>
+                    <button onclick="clearFilters()">Clear</button>
+                </div>
+            </div>
+            <div id="products-list" class="products-grid"></div>
+        </div>
+
+        <!-- Sales Tab -->
+        <div id="sales-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Weekly Sales Analytics</h2>
+                <select id="sales-filter-type" onchange="loadWeeklySales()">
+                    <option value="">All Products</option>
+                    <option value="hair">Hair Products</option>
+                    <option value="perfume">Perfumes</option>
+                    <option value="skin">Skin Products</option>
+                </select>
+            </div>
+            <div id="sales-summary" class="summary-cards"></div>
+            <div id="sales-list" class="sales-table"></div>
+        </div>
+
+        <!-- Costs Tab -->
+        <div id="costs-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Average Costs by Product Type</h2>
+            </div>
+            <div id="costs-list" class="costs-grid"></div>
+        </div>
+
+        <!-- Add Product Tab -->
+        <div id="add-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Add New Product</h2>
+            </div>
+            <form id="add-product-form" class="product-form">
+                <div class="form-group">
+                    <label>Product Name *</label>
+                    <input type="text" id="add-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Product Type *</label>
+                    <select id="add-type" required>
+                        <option value="">Select Type</option>
+                        <option value="hair">Hair</option>
+                        <option value="perfume">Perfume</option>
+                        <option value="skin">Skin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <input type="text" id="add-category" required placeholder="e.g., shampoo, gucci, body_lotion">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cost ($) *</label>
+                        <input type="number" id="add-cost" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Sales per Day *</label>
+                        <input type="number" id="add-sales" step="0.1" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Add Product</button>
+            </form>
+        </div>
+
+        <!-- Ask (Natural Language) Tab -->
+        <div id="ask-tab" class="tab-content">
+            <div class="section-header">
+                <h2>Ask a Question</h2>
+            </div>
+            <div class="product-form" style="max-width:800px;">
+                <div class="form-group">
+                    <label>Type your question (examples below)</label>
+                    <input type="text" id="ask-input" placeholder="e.g., shampoo weekly sales, hair sales per day, today gucci sales">
+                </div>
+                <div class="form-actions">
+                    <button class="btn-primary" id="ask-submit">Ask</button>
+                </div>
+                <div style="margin-top:10px;color:#666;font-size:0.95em;">
+                    Examples: "shampoo weekly sales", "hair sales per day", "today perfume sales", "gucci weekly revenue"
+                </div>
+            </div>
+            <div id="ask-results" style="margin-top:20px;"></div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Product</h2>
+            <form id="edit-product-form" class="product-form">
+                <input type="hidden" id="edit-id">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="edit-name">
+                </div>
+                <div class="form-group">
+                    <label>Product Type</label>
+                    <select id="edit-type">
+                        <option value="hair">Hair</option>
+                        <option value="perfume">Perfume</option>
+                        <option value="skin">Skin</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Category</label>
+                    <input type="text" id="edit-category">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Cost ($)</label>
+                        <input type="number" id="edit-cost" step="0.01">
+                    </div>
+                    <div class="form-group">
+                        <label>Sales per Day</label>
+                        <input type="number" id="edit-sales" step="0.1">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Update Product</button>
+                    <button type="button" class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
